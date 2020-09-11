@@ -14,6 +14,7 @@ class Association<T> extends AbstractFactoryAttribute<T> implements Attribute{
     Closure<T> defaultObjectProducer
     List<String> traits
     boolean afterBuild = false
+    Class<T> t
 
     /**
      * Create a new Association which combines user specified overrides with optional default overrides and traits.
@@ -34,6 +35,8 @@ class Association<T> extends AbstractFactoryAttribute<T> implements Attribute{
      */
     Association(Class<? extends BaseFactory<T, ? extends Faker>> factoryClass) {
         super(factoryClass)
+        this.t = factoryClass
+
     }
 
     @Override
@@ -52,7 +55,7 @@ class Association<T> extends AbstractFactoryAttribute<T> implements Attribute{
 
     @Override
     def evaluate(Object override, Evaluator evaluator, Object owner) {
-        if (override == null || override instanceof T) {
+        if (override == null || t.isInstance(object)) {
             getFactory().build((T) override)
         } else if (override instanceof Map) {
             // override given as map, use these together with default overrides to build the object
